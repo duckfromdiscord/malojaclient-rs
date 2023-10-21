@@ -12,3 +12,11 @@ Cargo.lock
 
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
+
+
+# Added by cargo
+
+/target
+
+# I use main.rs exclusively for quick testing. It should under no circumstances be included in the repository.
+main.rs
