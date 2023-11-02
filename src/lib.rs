@@ -1,8 +1,19 @@
 mod json;
+
+#[cfg(feature = "full")]
+pub mod types;
+
 #[cfg(feature = "full")]
 pub mod charts;
 
+#[cfg(feature = "full")]
+pub mod history;
+
+#[cfg(feature = "full")]
+pub mod range;
+
 use crate::json::{ScrobbleReq, ScrobbleRes};
+
 
 #[derive(Debug)]
 pub enum RequestError {

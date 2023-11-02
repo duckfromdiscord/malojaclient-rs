@@ -39,7 +39,7 @@ pub struct ScrobbleReq {
 }
 
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
-pub struct Track {
+pub struct ScrobbleResTrack {
     pub artists: Vec<String>,
     pub title: String,
 }
@@ -49,7 +49,7 @@ pub struct Track {
 pub struct ScrobbleRes {
     pub status: String,
     pub desc: Option<String>,
-    pub track: Option<Track>,
+    pub track: Option<ScrobbleResTrack>,
     pub error: Option<Error>,
 }
 
@@ -105,7 +105,7 @@ pub struct AlbumRes {
 }
 
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
 pub struct TrackRes {
     pub artists: Vec<String>,
     pub title: String,
@@ -113,7 +113,7 @@ pub struct TrackRes {
     pub length: Option<u64>, 
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
 pub struct TrackResultRes {
     pub scrobbles: u64,
     pub track: TrackRes,
@@ -161,3 +161,41 @@ pub struct AlbumChartRes {
 }
 
 impl_malojaresponse!(AlbumChartRes);
+
+
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
+pub struct ScrobblesReq {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub from: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub until: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "in")]
+    pub _in: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub artist: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub page: Option<u64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub perpage: Option<u64>,
+}
+
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
+pub struct ScrobblesTrackRes {
+    pub time: u64,
+    // Thankfully, `/scrobbles` uses the same Track as `/charts/tracks`
+    pub track: TrackRes,
+    pub duration: Option<u64>,
+    pub origin: Option<String>,
+}
+
+
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
+pub struct ScrobblesRes {
+    pub status: String,
+    pub list: Option<Vec<ScrobblesTrackRes>>,
+    pub error: Option<Error>,
+}
+
+
+impl_malojaresponse!(ScrobblesRes);
