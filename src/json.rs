@@ -100,7 +100,7 @@ impl_malojaresponse!(ArtistChartRes);
 
 #[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
 pub struct AlbumRes {
-    pub artists: Vec<String>,
+    pub artists: Option<Vec<String>>,
     pub albumtitle: String,
 }
 
@@ -180,7 +180,7 @@ pub struct ScrobblesReq {
     pub perpage: Option<u64>,
 }
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
 pub struct ScrobblesTrackRes {
     pub time: u64,
     // Thankfully, `/scrobbles` uses the same Track as `/charts/tracks`
@@ -190,7 +190,7 @@ pub struct ScrobblesTrackRes {
 }
 
 
-#[derive(Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
 pub struct ScrobblesRes {
     pub status: String,
     pub list: Option<Vec<ScrobblesTrackRes>>,

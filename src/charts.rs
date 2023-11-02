@@ -97,7 +97,7 @@ pub fn charts_albums(range: Range, artist: Option<String>, credentials: MalojaCr
                 albums.push((Album {
                     name: album.album.albumtitle,
                     id: album.album_id.to_string(),
-                    artists: Some(album.album.artists),
+                    artists: album.album.artists,
                 }, album.rank));
             }
             Ok(AlbumChart {

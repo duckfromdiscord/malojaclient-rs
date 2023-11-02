@@ -24,7 +24,7 @@ impl Track {
             track.title,
             id,
             track.album.clone().map(|album| Some(album.albumtitle)).unwrap_or(None),
-            track.album.map(|album| Some(album.artists)).unwrap_or(None),
+            track.album.map(|album| Some(album.artists)).unwrap_or(None).unwrap_or(None),
             track.artists,
         );
     }
