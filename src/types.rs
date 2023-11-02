@@ -6,15 +6,17 @@ pub struct Track {
     pub id: Option<String>,
     pub album: Option<String>,
     pub album_artists: Option<Vec<String>>,
+    pub artists: Vec<String>,
 }
 
 impl Track {
-    pub fn new(name: String, id: Option<String>, album: Option<String>, album_artists: Option<Vec<String>>) -> Self {
+    pub fn new(name: String, id: Option<String>, album: Option<String>, album_artists: Option<Vec<String>>, artists: Vec<String>) -> Self {
         return Self {
             name,
             id,
             album,
             album_artists,
+            artists,
         }
     }
     pub fn from_trackres(track: TrackRes, id: Option<String>) -> Self {
@@ -23,6 +25,7 @@ impl Track {
             id,
             track.album.clone().map(|album| Some(album.albumtitle)).unwrap_or(None),
             track.album.map(|album| Some(album.artists)).unwrap_or(None),
+            track.artists,
         );
     }
     pub fn from_trackresultres(track: TrackResultRes) -> Self {
