@@ -3,7 +3,7 @@ use crate::{MalojaCredentials, RequestError, get_client_async};
 
 use reqwest::Client;
 
-async fn get_image_jpeg_async(id: String, from_type: &str, credentials: MalojaCredentials, client: Client) -> Result<Bytes, RequestError> {
+async fn get_image_async(id: String, from_type: &str, credentials: MalojaCredentials, client: Client) -> Result<Bytes, RequestError> {
     let response = client
     .get(credentials.get_url() + "/image?" + from_type + "_id=" + &id)
     .send()
@@ -25,26 +25,26 @@ async fn get_image_jpeg_async(id: String, from_type: &str, credentials: MalojaCr
     }
 }
 
-pub async fn album_art_jpeg_async(id: String, credentials: MalojaCredentials, client: Client) -> Result<Bytes, RequestError> {
-    get_image_jpeg_async(id, "album", credentials, client).await
+pub async fn album_art_async(id: String, credentials: MalojaCredentials, client: Client) -> Result<Bytes, RequestError> {
+    get_image_async(id, "album", credentials, client).await
 }
 
-pub async fn artist_art_jpeg_async(id: String, credentials: MalojaCredentials, client: Client) -> Result<Bytes, RequestError> {
-    get_image_jpeg_async(id, "artist", credentials, client).await
+pub async fn artist_art_async(id: String, credentials: MalojaCredentials, client: Client) -> Result<Bytes, RequestError> {
+    get_image_async(id, "artist", credentials, client).await
 }
 
 
-fn get_image_jpeg(id: String, from_type: &str, credentials: MalojaCredentials) -> Result<Bytes, RequestError> {
+fn get_image(id: String, from_type: &str, credentials: MalojaCredentials) -> Result<Bytes, RequestError> {
     tokio::runtime::Runtime::new().unwrap().block_on( async {
         let client = get_client_async(&credentials);
-        get_image_jpeg_async(id, from_type, credentials, client).await
+        get_image_async(id, from_type, credentials, client).await
     })
 }
 
-pub fn album_art_jpeg(id: String, credentials: MalojaCredentials) -> Result<Bytes, RequestError> {
-    get_image_jpeg(id, "album", credentials)
+pub fn album_art(id: String, credentials: MalojaCredentials) -> Result<Bytes, RequestError> {
+    get_image(id, "album", credentials)
 }
 
-pub fn artist_art_jpeg(id: String, credentials: MalojaCredentials) -> Result<Bytes, RequestError> {
-    get_image_jpeg(id, "artist", credentials)
+pub fn artist_art(id: String, credentials: MalojaCredentials) -> Result<Bytes, RequestError> {
+    get_image(id, "artist", credentials)
 }
