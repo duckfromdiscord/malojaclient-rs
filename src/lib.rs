@@ -17,6 +17,7 @@ pub mod art;
 
 use crate::json::{ScrobbleReq, ScrobbleRes};
 
+use reqwest::Client;
 
 #[derive(Debug)]
 pub enum RequestError {
@@ -43,12 +44,12 @@ impl MalojaCredentials {
     }
 }
 
-fn handle_response<T: crate::json::MalojaResponse + for<'de> serde::Deserialize<'de>>(response: Result<reqwest::blocking::Response, reqwest::Error>) -> Result<T, RequestError> {
+async fn handle_response<T: crate::json::MalojaResponse + for<'de> serde::Deserialize<'de>>(response: Result<reqwest::Response, reqwest::Error>) -> Result<T, RequestError> {
     if response.is_err() {
         return Err(RequestError::LocalError(response.err().unwrap()));
     }
     let response = response.unwrap();
-    match response.json::<T>() {
+    match response.json::<T>().await {
         Err(error) => {
             Err(RequestError::LocalError(error))
         },
@@ -61,14 +62,6 @@ fn handle_response<T: crate::json::MalojaResponse + for<'de> serde::Deserialize<
     }
 }
 
-pub fn get_client(credentials: &MalojaCredentials) -> reqwest::blocking::Client {
-    reqwest::blocking::Client::builder()
-        .danger_accept_invalid_certs(credentials.skip_cert_verification)
-        .build()
-        .unwrap()
-}
-
-#[cfg(feature = "async")]
 pub fn get_client_async(credentials: &MalojaCredentials) -> reqwest::Client {
     reqwest::Client::builder()
         .danger_accept_invalid_certs(credentials.skip_cert_verification)
@@ -76,8 +69,7 @@ pub fn get_client_async(credentials: &MalojaCredentials) -> reqwest::Client {
         .unwrap()
 }
 
-pub fn scrobble(title: String, artist: String, credentials: MalojaCredentials) -> Result<ScrobbleRes, RequestError> {
-    
+pub async fn scrobble_async(title: String, artist: String, credentials: MalojaCredentials, client: Client) -> Result<ScrobbleRes, RequestError> {
     let scrobblebody = ScrobbleReq {
         artist: Some(artist),
         artists: None,
@@ -89,9 +81,17 @@ pub fn scrobble(title: String, artist: String, credentials: MalojaCredentials) -
         time: None,
         key: credentials.api_key.as_ref().unwrap().to_string(),
     };
-    let response = get_client(&credentials)
+    let response = client
         .post(credentials.get_url() + "/apis/mlj_1/newscrobble")
         .json(&scrobblebody)
-        .send();
-    handle_response::<ScrobbleRes>(response)
+        .send()
+        .await;
+    handle_response::<ScrobbleRes>(response).await
+}
+
+pub fn scrobble(title: String, artist: String, credentials: MalojaCredentials) -> Result<ScrobbleRes, RequestError> { 
+    tokio::runtime::Runtime::new().unwrap().block_on( async {
+        let client = get_client_async(&credentials);
+        scrobble_async(title, artist, credentials, client).await
+    })
 }

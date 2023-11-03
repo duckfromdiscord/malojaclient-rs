@@ -1,5 +1,7 @@
+use reqwest::Client;
+
 use crate::{json::*, range::{Range, process_range}, types::*};
-use crate::{MalojaCredentials, RequestError, handle_response, get_client};
+use crate::{MalojaCredentials, RequestError, handle_response, get_client_async};
 
 #[derive(Debug)]
 pub struct ArtistChart {
@@ -16,18 +18,19 @@ pub struct AlbumChart {
     pub albums: Vec<(Album, u64)>,
 }
 
-pub fn charts_artists(range: Range, credentials: MalojaCredentials) -> Result<ArtistChart, RequestError> {
+pub async fn charts_artists_async(range: Range, credentials: MalojaCredentials, client: Client) -> Result<ArtistChart, RequestError> {
     let from_until_in = process_range(range);
     let requestbody = ArtistChartReq {
       from: from_until_in.0,
       until: from_until_in.1,
       _in: from_until_in.2,  
     };
-    let response = get_client(&credentials)
+    let response = client
         .get(credentials.get_url() + "/apis/mlj_1/charts/artists")
         .json(&requestbody)
-        .send();
-    match handle_response::<ArtistChartRes>(response) {
+        .send()
+        .await;
+    match handle_response::<ArtistChartRes>(response).await {
         Err(error) => {
             Err(error)
         },
@@ -47,7 +50,14 @@ pub fn charts_artists(range: Range, credentials: MalojaCredentials) -> Result<Ar
 }
 
 
-pub fn charts_tracks(range: Range, artist: Option<String>, credentials: MalojaCredentials) -> Result<TrackChart, RequestError> {
+pub fn charts_artists(range: Range, credentials: MalojaCredentials) -> Result<ArtistChart, RequestError> {
+    tokio::runtime::Runtime::new().unwrap().block_on( async {
+        let client = get_client_async(&credentials);
+        charts_artists_async(range, credentials, client).await
+    })
+}
+
+pub async fn charts_tracks_async(range: Range, artist: Option<String>, credentials: MalojaCredentials, client: Client) -> Result<TrackChart, RequestError> {
     let from_until_in = process_range(range);
     let requestbody = TrackChartReq {
         from: from_until_in.0,
@@ -55,11 +65,12 @@ pub fn charts_tracks(range: Range, artist: Option<String>, credentials: MalojaCr
         _in: from_until_in.2,
       artist,
     };
-    let response = get_client(&credentials)
+    let response = client
         .get(credentials.get_url() + "/apis/mlj_1/charts/tracks")
         .json(&requestbody)
-        .send();
-    match handle_response::<TrackChartRes>(response) {
+        .send()
+        .await;
+    match handle_response::<TrackChartRes>(response).await {
         Err(error) => {
             Err(error)
         },
@@ -75,7 +86,14 @@ pub fn charts_tracks(range: Range, artist: Option<String>, credentials: MalojaCr
     }
 }
 
-pub fn charts_albums(range: Range, artist: Option<String>, credentials: MalojaCredentials) -> Result<AlbumChart, RequestError> {
+pub fn charts_tracks(range: Range, artist: Option<String>, credentials: MalojaCredentials) -> Result<TrackChart, RequestError> {
+    tokio::runtime::Runtime::new().unwrap().block_on( async {
+        let client = get_client_async(&credentials);
+        charts_tracks_async(range, artist, credentials, client).await
+    })
+}
+
+pub async fn charts_albums_async(range: Range, artist: Option<String>, credentials: MalojaCredentials, client: Client) -> Result<AlbumChart, RequestError> {
     let from_until_in = process_range(range);
     let requestbody = AlbumChartReq {
         from: from_until_in.0,
@@ -83,11 +101,12 @@ pub fn charts_albums(range: Range, artist: Option<String>, credentials: MalojaCr
         _in: from_until_in.2,
       artist,
     };
-    let response = get_client(&credentials)
+    let response = client
         .get(credentials.get_url() + "/apis/mlj_1/charts/albums")
         .json(&requestbody)
-        .send();
-    match handle_response::<AlbumChartRes>(response) {
+        .send()
+        .await;
+    match handle_response::<AlbumChartRes>(response).await {
         Err(error) => {
             Err(error)
         },
@@ -105,4 +124,12 @@ pub fn charts_albums(range: Range, artist: Option<String>, credentials: MalojaCr
             })
         }
     }
+}
+
+
+pub fn charts_albums(range: Range, artist: Option<String>, credentials: MalojaCredentials) -> Result<AlbumChart, RequestError> {
+    tokio::runtime::Runtime::new().unwrap().block_on( async {
+        let client = get_client_async(&credentials);
+        charts_albums_async(range, artist, credentials, client).await
+    })
 }
