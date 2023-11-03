@@ -20,3 +20,5 @@ Cargo.lock
 
 # I use main.rs exclusively for quick testing. It should under no circumstances be included in the repository.
 main.rs
+
+*.jpg

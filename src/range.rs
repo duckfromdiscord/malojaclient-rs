@@ -23,5 +23,5 @@ pub fn process_range(range: Range) -> (Option<String>, Option<String>, Option<St
             until = Some(range.1);
         },
     };
-    return (from, until, _in);
+    (from, until, _in)
 }

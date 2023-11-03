@@ -12,6 +12,9 @@ pub mod history;
 #[cfg(feature = "full")]
 pub mod range;
 
+#[cfg(feature = "full")]
+pub mod art;
+
 use crate::json::{ScrobbleReq, ScrobbleRes};
 
 
