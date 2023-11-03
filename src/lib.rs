@@ -68,6 +68,14 @@ pub fn get_client(credentials: &MalojaCredentials) -> reqwest::blocking::Client 
         .unwrap()
 }
 
+#[cfg(feature = "async")]
+pub fn get_client_async(credentials: &MalojaCredentials) -> reqwest::Client {
+    reqwest::Client::builder()
+        .danger_accept_invalid_certs(credentials.skip_cert_verification)
+        .build()
+        .unwrap()
+}
+
 pub fn scrobble(title: String, artist: String, credentials: MalojaCredentials) -> Result<ScrobbleRes, RequestError> {
     
     let scrobblebody = ScrobbleReq {
