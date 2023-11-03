@@ -33,13 +33,13 @@ impl Track {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Artist {
     pub name: String,
     pub id: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Album {
     pub name: String,
     pub id: String,

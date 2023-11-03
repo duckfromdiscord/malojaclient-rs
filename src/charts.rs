@@ -3,17 +3,17 @@ use reqwest::Client;
 use crate::{json::*, range::{Range, process_range}, types::*};
 use crate::{MalojaCredentials, RequestError, handle_response, get_client_async};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ArtistChart {
     pub artists: Vec<(Artist, u64)>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TrackChart {
     pub tracks: Vec<(Track, u64)>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AlbumChart {
     pub albums: Vec<(Album, u64)>,
 }
