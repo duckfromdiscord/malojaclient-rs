@@ -45,3 +45,40 @@ pub fn scrobbles(artist: Option<String>, range: Range, page_number: Option<u64>,
         scrobbles_async(artist, range, page_number, scrobbles_per_page, credentials, client).await
     })
 }
+
+pub async fn numscrobbles_async(artist: Option<String>, range: Range, credentials: MalojaCredentials, client: Client) -> Result<u64, RequestError> {
+    let from_until_in = process_range(range);
+    // numscrobbles uses the same exact documentation/query structure as scrobbles even though pages aren't relevant
+    let requestbody = ScrobblesReq {
+      from: from_until_in.0,
+      until: from_until_in.1,
+      _in: from_until_in.2,  
+      artist,
+      page: None,
+      perpage: None,
+    };
+    let response = client
+        .get(credentials.get_url() + "/apis/mlj_1/numscrobbles")
+        .json(&requestbody)
+        .send()
+        .await;
+    match handle_response::<NumscrobblesRes>(response).await {
+        Err(error) => {
+            Err(error)
+        },
+        Ok(response) => {
+            match response.amount {
+                Some(amount) => Ok(amount),
+                None => Err(RequestError::ServerError(response.status))
+            }
+        }
+    }
+}
+
+
+pub fn numscrobbles(artist: Option<String>, range: Range, credentials: MalojaCredentials) -> Result<u64, RequestError> {
+    tokio::runtime::Runtime::new().unwrap().block_on( async {
+        let client = get_client_async(&credentials);
+        numscrobbles_async(artist, range, credentials, client).await
+    })
+}

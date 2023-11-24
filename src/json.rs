@@ -199,3 +199,15 @@ pub struct ScrobblesRes {
 
 
 impl_malojaresponse!(ScrobblesRes);
+
+
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
+pub struct NumscrobblesRes {
+    pub status: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub amount: Option<u64>,
+    pub error: Option<Error>,
+}
+
+
+impl_malojaresponse!(NumscrobblesRes);
