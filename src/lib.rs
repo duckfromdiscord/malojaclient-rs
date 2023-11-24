@@ -1,4 +1,4 @@
-mod json;
+pub mod json;
 
 #[cfg(feature = "full")]
 pub mod types;
