@@ -31,6 +31,7 @@ pub struct MalojaCredentials {
     pub skip_cert_verification: bool,
     pub ip: String,
     pub port: u16,
+    pub path: Option<String>,
     pub api_key: Option<String>,
 }
 
@@ -40,7 +41,11 @@ impl MalojaCredentials {
             true => "https://",
             false => "http://",
         };
-        format!("{}{}:{}", protocol, &self.ip, &self.port)
+        let mut sub_path = self.clone().path.unwrap_or("".to_string()).trim_matches('/').to_owned();
+        if !sub_path.is_empty() {
+            sub_path = "/".to_owned() + &sub_path;
+        }
+        format!("{}{}:{}{}", protocol, &self.ip, &self.port, sub_path)
     }
 }
 
