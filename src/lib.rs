@@ -49,6 +49,18 @@ impl MalojaCredentials {
     }
 }
 
+pub fn full_query_path<T: for<'de> serde::Serialize>(query: T, path: &str) -> String {
+    let qs = serde_qs::to_string(&query).unwrap();
+    match qs.is_empty() {
+        true => {
+            path.to_string()
+        },
+        false => {
+            path.to_string() + "?" + &qs
+        }
+    }
+}
+
 async fn handle_response<T: crate::json::MalojaResponse + for<'de> serde::Deserialize<'de>>(response: Result<reqwest::Response, reqwest::Error>) -> Result<T, RequestError> {
     if response.is_err() {
         return Err(RequestError::LocalError(response.err().unwrap()));

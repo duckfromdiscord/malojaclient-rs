@@ -1,5 +1,5 @@
 use reqwest::Client;
-
+use crate::full_query_path;
 use crate::{json::*, range::{Range, process_range}, types::*};
 use crate::{MalojaCredentials, RequestError, handle_response, get_client_async};
 
@@ -26,8 +26,7 @@ pub async fn charts_artists_async(range: Range, credentials: MalojaCredentials, 
       _in: from_until_in.2,  
     };
     let response = client
-        .get(credentials.get_url() + "/apis/mlj_1/charts/artists")
-        .json(&requestbody)
+        .get(full_query_path(requestbody, &(credentials.get_url() + "/apis/mlj_1/charts/artists")))
         .send()
         .await;
     match handle_response::<ArtistChartRes>(response).await {
@@ -66,8 +65,7 @@ pub async fn charts_tracks_async(range: Range, artist: Option<String>, credentia
       artist,
     };
     let response = client
-        .get(credentials.get_url() + "/apis/mlj_1/charts/tracks")
-        .json(&requestbody)
+        .get(full_query_path(requestbody, &(credentials.get_url() + "/apis/mlj_1/charts/tracks")))
         .send()
         .await;
     match handle_response::<TrackChartRes>(response).await {
@@ -102,8 +100,7 @@ pub async fn charts_albums_async(range: Range, artist: Option<String>, credentia
       artist,
     };
     let response = client
-        .get(credentials.get_url() + "/apis/mlj_1/charts/albums")
-        .json(&requestbody)
+        .get(full_query_path(requestbody, &(credentials.get_url() + "/apis/mlj_1/charts/albums")))
         .send()
         .await;
     match handle_response::<AlbumChartRes>(response).await {
