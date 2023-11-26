@@ -1,7 +1,7 @@
 use reqwest::Client;
 use crate::full_query_path;
 use crate::{json::*, range::{Range, process_range}, types::*};
-use crate::{MalojaCredentials, RequestError, handle_response, get_client_async};
+use crate::{MalojaCredentials, RequestError, handle_response, get_client_async, parse_headers};
 
 #[derive(Debug, Clone)]
 pub struct ArtistChart {
@@ -27,6 +27,7 @@ pub async fn charts_artists_async(range: Range, credentials: MalojaCredentials, 
     };
     let response = client
         .get(full_query_path(requestbody, &(credentials.get_url() + "/apis/mlj_1/charts/artists")))
+        .headers(parse_headers(credentials.headers))
         .send()
         .await;
     match handle_response::<ArtistChartRes>(response).await {
@@ -66,6 +67,7 @@ pub async fn charts_tracks_async(range: Range, artist: Option<String>, credentia
     };
     let response = client
         .get(full_query_path(requestbody, &(credentials.get_url() + "/apis/mlj_1/charts/tracks")))
+        .headers(parse_headers(credentials.headers))
         .send()
         .await;
     match handle_response::<TrackChartRes>(response).await {
@@ -101,6 +103,7 @@ pub async fn charts_albums_async(range: Range, artist: Option<String>, credentia
     };
     let response = client
         .get(full_query_path(requestbody, &(credentials.get_url() + "/apis/mlj_1/charts/albums")))
+        .headers(parse_headers(credentials.headers))
         .send()
         .await;
     match handle_response::<AlbumChartRes>(response).await {

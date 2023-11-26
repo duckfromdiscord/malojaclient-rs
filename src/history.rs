@@ -1,5 +1,5 @@
 use crate::{json::*, range::{Range, process_range}, types::*};
-use crate::{MalojaCredentials, RequestError, handle_response, get_client_async};
+use crate::{MalojaCredentials, RequestError, handle_response, get_client_async, parse_headers};
 use chrono::prelude::*;
 use reqwest::Client;
 use crate::full_query_path;
@@ -22,6 +22,7 @@ pub async fn scrobbles_async(artist: Option<String>, range: Range, page_number: 
     };
     let response = client
         .get(full_query_path(requestbody, &(credentials.get_url() + "/apis/mlj_1/scrobbles")))
+        .headers(parse_headers(credentials.headers))
         .send()
         .await;
     match handle_response::<ScrobblesRes>(response).await {
@@ -59,6 +60,7 @@ pub async fn numscrobbles_async(artist: Option<String>, range: Range, credential
     };
     let response = client
         .get(full_query_path(requestbody, &(credentials.get_url() + "/apis/mlj_1/numscrobbles")))
+        .headers(parse_headers(credentials.headers))
         .send()
         .await;
     match handle_response::<NumscrobblesRes>(response).await {

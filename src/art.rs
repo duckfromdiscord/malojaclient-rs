@@ -1,11 +1,11 @@
 use bytes::Bytes;
-use crate::{MalojaCredentials, RequestError, get_client_async};
-
+use crate::{MalojaCredentials, RequestError, get_client_async, parse_headers};
 use reqwest::Client;
 
 async fn get_image_async(id: String, from_type: &str, credentials: MalojaCredentials, client: Client) -> Result<Bytes, RequestError> {
     let response = client
     .get(credentials.get_url() + "/image?" + from_type + "_id=" + &id)
+    .headers(parse_headers(credentials.headers))
     .send()
     .await;
     match response {

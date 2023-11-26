@@ -16,8 +16,10 @@ pub mod range;
 pub mod art;
 
 use crate::json::{ScrobbleReq, ScrobbleRes};
+use std::str::FromStr;
+use std::collections::HashMap;
 
-use reqwest::Client;
+use reqwest::{Client, header::{HeaderMap, HeaderName, HeaderValue}};
 
 #[derive(Debug)]
 pub enum RequestError {
@@ -32,6 +34,7 @@ pub struct MalojaCredentials {
     pub ip: String,
     pub port: u16,
     pub path: Option<String>,
+    pub headers: Option<HashMap<String,String>>,
     pub api_key: Option<String>,
 }
 
@@ -59,6 +62,21 @@ pub fn full_query_path<T: for<'de> serde::Serialize>(query: T, path: &str) -> St
             path.to_string() + "?" + &qs
         }
     }
+}
+
+pub fn parse_headers(maybe_headers: Option<HashMap<String, String>>) -> HeaderMap {
+    let mut map = HeaderMap::new();
+    if let Some(headers) = maybe_headers {
+        for key in headers.keys() {
+            let header_key = HeaderName::from_str(key);
+            let header_value = HeaderValue::from_str(headers.get(key).unwrap());
+            if header_key.is_err() || header_value.is_err() {
+                continue;
+            }
+            map.insert(header_key.unwrap(), header_value.unwrap());
+        }
+    }
+    map
 }
 
 async fn handle_response<T: crate::json::MalojaResponse + for<'de> serde::Deserialize<'de>>(response: Result<reqwest::Response, reqwest::Error>) -> Result<T, RequestError> {
@@ -100,6 +118,7 @@ pub async fn scrobble_async(title: String, artist: String, credentials: MalojaCr
     };
     let response = client
         .post(credentials.get_url() + "/apis/mlj_1/newscrobble")
+        .headers(parse_headers(credentials.headers))
         .json(&scrobblebody)
         .send()
         .await;
