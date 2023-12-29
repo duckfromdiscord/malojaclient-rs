@@ -1,4 +1,5 @@
 // Dates are in YYYY/MM/DD format.
+#[derive(PartialEq)]
 pub enum Range {
     AllTime,
     In(String),
