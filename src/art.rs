@@ -1,5 +1,7 @@
+use crate::credentials::MalojaCredentials;
+use crate::errors::RequestError;
+use crate::{get_client_async, parse_headers};
 use bytes::Bytes;
-use crate::{MalojaCredentials, RequestError, get_client_async, parse_headers};
 use reqwest::Client;
 
 async fn get_image_async(id: String, from_type: &str, credentials: MalojaCredentials, client: Client) -> Result<Bytes, RequestError> {

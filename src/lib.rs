@@ -1,3 +1,5 @@
+pub mod credentials;
+pub mod errors;
 pub mod json;
 
 #[cfg(feature = "full")]
@@ -15,42 +17,16 @@ pub mod range;
 #[cfg(feature = "full")]
 pub mod art;
 
+use crate::credentials::MalojaCredentials;
+use crate::errors::RequestError;
 use crate::json::{ScrobbleReq, ScrobbleRes};
-use std::str::FromStr;
 use std::collections::HashMap;
+use std::str::FromStr;
 
-use reqwest::{Client, header::{HeaderMap, HeaderName, HeaderValue}};
-
-#[derive(Debug)]
-pub enum RequestError {
-    LocalError(reqwest::Error),
-    ServerError(String),
-}
-
-#[derive(Debug, Clone)]
-pub struct MalojaCredentials {
-    pub https: bool,
-    pub skip_cert_verification: bool,
-    pub ip: String,
-    pub port: u16,
-    pub path: Option<String>,
-    pub headers: Option<HashMap<String,String>>,
-    pub api_key: Option<String>,
-}
-
-impl MalojaCredentials {
-    pub fn get_url(&self) -> String {
-        let protocol = match self.https {
-            true => "https://",
-            false => "http://",
-        };
-        let mut sub_path = self.clone().path.unwrap_or("".to_string()).trim_matches('/').to_owned();
-        if !sub_path.is_empty() {
-            sub_path = "/".to_owned() + &sub_path;
-        }
-        format!("{}{}:{}{}", protocol, &self.ip, &self.port, sub_path)
-    }
-}
+use reqwest::{
+    header::{HeaderMap, HeaderName, HeaderValue},
+    Client,
+};
 
 pub fn full_query_path<T: for<'de> serde::Serialize>(query: T, path: &str) -> String {
     let qs = serde_qs::to_string(&query).unwrap();

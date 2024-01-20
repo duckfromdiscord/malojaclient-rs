@@ -1,7 +1,8 @@
 use reqwest::Client;
 use crate::full_query_path;
 use crate::{json::*, range::{Range, process_range}, types::*};
-use crate::{MalojaCredentials, RequestError, handle_response, get_client_async, parse_headers};
+use crate::errors::RequestError;
+use crate::{get_client_async, handle_response, parse_headers, MalojaCredentials};
 
 #[derive(Debug, Clone)]
 pub struct ArtistChart {

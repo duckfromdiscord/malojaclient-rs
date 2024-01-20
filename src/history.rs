@@ -1,8 +1,9 @@
-use crate::{json::*, range::{Range, process_range}, types::*};
-use crate::{MalojaCredentials, RequestError, handle_response, get_client_async, parse_headers};
+use crate::full_query_path;
+use crate::errors::RequestError;
+use crate::{get_client_async, handle_response, parse_headers, MalojaCredentials};
+use crate::{json::*, range::{process_range, Range}, types::*};
 use chrono::prelude::*;
 use reqwest::Client;
-use crate::full_query_path;
 
 #[derive(Clone, Debug)]
 pub struct Scrobble {
