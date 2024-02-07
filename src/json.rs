@@ -1,5 +1,6 @@
-use serde_derive::{Deserialize, Serialize};
+#![allow(missing_docs)]
 
+use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
 pub struct Error {
@@ -43,7 +44,6 @@ pub struct ScrobbleResTrack {
     pub artists: Vec<String>,
     pub title: String,
 }
-
 
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct ScrobbleRes {
@@ -104,13 +104,12 @@ pub struct AlbumRes {
     pub albumtitle: String,
 }
 
-
 #[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
 pub struct TrackRes {
     pub artists: Vec<String>,
     pub title: String,
     pub album: Option<AlbumRes>,
-    pub length: Option<u64>, 
+    pub length: Option<u64>,
 }
 
 #[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
@@ -129,8 +128,6 @@ pub struct TrackChartRes {
 }
 
 impl_malojaresponse!(TrackChartRes);
-
-
 
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct AlbumChartReq {
@@ -162,7 +159,6 @@ pub struct AlbumChartRes {
 
 impl_malojaresponse!(AlbumChartRes);
 
-
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct ScrobblesReq {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -189,7 +185,6 @@ pub struct ScrobblesTrackRes {
     pub origin: Option<String>,
 }
 
-
 #[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
 pub struct ScrobblesRes {
     pub status: String,
@@ -197,9 +192,7 @@ pub struct ScrobblesRes {
     pub error: Option<Error>,
 }
 
-
 impl_malojaresponse!(ScrobblesRes);
-
 
 #[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
 pub struct NumscrobblesRes {
@@ -208,6 +201,5 @@ pub struct NumscrobblesRes {
     pub amount: Option<u64>,
     pub error: Option<Error>,
 }
-
 
 impl_malojaresponse!(NumscrobblesRes);
