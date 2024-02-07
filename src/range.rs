@@ -3,7 +3,7 @@
 pub enum Range {
     AllTime,
     In(String),
-    FromTo( (String, String) )
+    FromTo((String, String)),
 }
 
 pub fn process_range(range: Range) -> (Option<String>, Option<String>, Option<String>) {
@@ -15,14 +15,14 @@ pub fn process_range(range: Range) -> (Option<String>, Option<String>, Option<St
             from = None;
             until = None;
             _in = None;
-        },
+        }
         Range::In(range) => {
             _in = Some(range);
         }
         Range::FromTo(range) => {
             from = Some(range.0);
             until = Some(range.1);
-        },
+        }
     };
     (from, until, _in)
 }

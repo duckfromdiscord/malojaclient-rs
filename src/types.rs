@@ -10,7 +10,13 @@ pub struct Track {
 }
 
 impl Track {
-    pub fn new(name: String, id: Option<String>, album: Option<String>, album_artists: Option<Vec<String>>, artists: Vec<String>) -> Self {
+    pub fn new(
+        name: String,
+        id: Option<String>,
+        album: Option<String>,
+        album_artists: Option<Vec<String>>,
+        artists: Vec<String>,
+    ) -> Self {
         Self {
             name,
             id,
@@ -23,8 +29,16 @@ impl Track {
         Track::new(
             track.title,
             id,
-            track.album.clone().map(|album| Some(album.albumtitle)).unwrap_or(None),
-            track.album.map(|album| Some(album.artists)).unwrap_or(None).unwrap_or(None),
+            track
+                .album
+                .clone()
+                .map(|album| Some(album.albumtitle))
+                .unwrap_or(None),
+            track
+                .album
+                .map(|album| Some(album.artists))
+                .unwrap_or(None)
+                .unwrap_or(None),
             track.artists,
         )
     }

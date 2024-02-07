@@ -36,7 +36,6 @@ impl MalojaCredentials {
     }
 }
 
-
 #[derive(Default)]
 pub struct MalojaCredentialsBuilder {
     https: bool,

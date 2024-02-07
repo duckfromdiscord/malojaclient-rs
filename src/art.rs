@@ -4,40 +4,48 @@ use crate::{get_client_async, parse_headers};
 use bytes::Bytes;
 use reqwest::Client;
 
-async fn get_image_async(id: String, from_type: &str, credentials: MalojaCredentials, client: Client) -> Result<Bytes, RequestError> {
+async fn get_image_async(
+    id: String,
+    from_type: &str,
+    credentials: MalojaCredentials,
+    client: Client,
+) -> Result<Bytes, RequestError> {
     let response = client
-    .get(credentials.get_url() + "/image?" + from_type + "_id=" + &id)
-    .headers(parse_headers(credentials.headers))
-    .send()
-    .await;
+        .get(credentials.get_url() + "/image?" + from_type + "_id=" + &id)
+        .headers(parse_headers(credentials.headers))
+        .send()
+        .await;
     match response {
-        Err(err) => {
-            Err(RequestError::ReqwestError(err))
+        Err(err) => Err(RequestError::ReqwestError(err)),
+        Ok(response) => match response.error_for_status() {
+            Err(err) => Err(RequestError::ServerError(err.to_string())),
+            Ok(actual_response) => Ok(actual_response.bytes().await.unwrap()),
         },
-        Ok(response) => {
-            match response.error_for_status() {
-                Err(err) => {
-                    Err(RequestError::ServerError(err.to_string()))
-                },
-                Ok(actual_response) => {
-                    Ok(actual_response.bytes().await.unwrap())
-                }
-            }
-        }
     }
 }
 
-pub async fn album_art_async(id: String, credentials: MalojaCredentials, client: Client) -> Result<Bytes, RequestError> {
+pub async fn album_art_async(
+    id: String,
+    credentials: MalojaCredentials,
+    client: Client,
+) -> Result<Bytes, RequestError> {
     get_image_async(id, "album", credentials, client).await
 }
 
-pub async fn artist_art_async(id: String, credentials: MalojaCredentials, client: Client) -> Result<Bytes, RequestError> {
+pub async fn artist_art_async(
+    id: String,
+    credentials: MalojaCredentials,
+    client: Client,
+) -> Result<Bytes, RequestError> {
     get_image_async(id, "artist", credentials, client).await
 }
 
-
-fn get_image(id: String, from_type: &str, credentials: MalojaCredentials) -> Result<Bytes, RequestError> {
-    tokio::runtime::Runtime::new().unwrap().block_on( async {
+fn get_image(
+    id: String,
+    from_type: &str,
+    credentials: MalojaCredentials,
+) -> Result<Bytes, RequestError> {
+    tokio::runtime::Runtime::new().unwrap().block_on(async {
         let client = get_client_async(&credentials);
         get_image_async(id, from_type, credentials, client.unwrap()).await
     })
