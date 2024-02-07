@@ -15,11 +15,11 @@
 //!
 //! ```
 //! let creds = mljcl::credentials::MalojaCredentialsBuilder::new()
-//! .https(false)
-//! .ip("127.0.0.1".into())
-//! .port(42010)
-//! .build()
-//! .unwrap();
+//!     .https(false)
+//!     .ip("127.0.0.1".into())
+//!     .port(42010)
+//!     .build()
+//!     .unwrap();
 //! ```
 //!
 //! You can then, for example, get today's scrobbles for a certain artist:
