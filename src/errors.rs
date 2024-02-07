@@ -1,6 +1,6 @@
 #[derive(Debug)]
 pub enum RequestError {
-    LocalError(reqwest::Error),
+    ReqwestError(reqwest::Error),
     ServerError(String),
 }
 

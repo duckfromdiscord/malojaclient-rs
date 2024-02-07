@@ -44,7 +44,7 @@ pub async fn scrobbles_async(artist: Option<String>, range: Range, page_number: 
 pub fn scrobbles(artist: Option<String>, range: Range, page_number: Option<u64>, scrobbles_per_page: Option<u64>, credentials: MalojaCredentials) -> Result<Vec<Scrobble>, RequestError> {
     tokio::runtime::Runtime::new().unwrap().block_on( async {
         let client = get_client_async(&credentials);
-        scrobbles_async(artist, range, page_number, scrobbles_per_page, credentials, client).await
+        scrobbles_async(artist, range, page_number, scrobbles_per_page, credentials, client.unwrap()).await
     })
 }
 
@@ -81,6 +81,6 @@ pub async fn numscrobbles_async(artist: Option<String>, range: Range, credential
 pub fn numscrobbles(artist: Option<String>, range: Range, credentials: MalojaCredentials) -> Result<u64, RequestError> {
     tokio::runtime::Runtime::new().unwrap().block_on( async {
         let client = get_client_async(&credentials);
-        numscrobbles_async(artist, range, credentials, client).await
+        numscrobbles_async(artist, range, credentials, client.unwrap()).await
     })
 }

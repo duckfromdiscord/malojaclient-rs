@@ -57,12 +57,12 @@ pub fn parse_headers(maybe_headers: Option<HashMap<String, String>>) -> HeaderMa
 
 async fn handle_response<T: crate::json::MalojaResponse + for<'de> serde::Deserialize<'de>>(response: Result<reqwest::Response, reqwest::Error>) -> Result<T, RequestError> {
     if response.is_err() {
-        return Err(RequestError::LocalError(response.err().unwrap()));
+        return Err(RequestError::ReqwestError(response.err().unwrap()));
     }
     let response = response.unwrap();
     match response.json::<T>().await {
         Err(error) => {
-            Err(RequestError::LocalError(error))
+            Err(RequestError::ReqwestError(error))
         },
         Ok(parsed_response) => {
             match parsed_response.get_error() {
@@ -73,11 +73,10 @@ async fn handle_response<T: crate::json::MalojaResponse + for<'de> serde::Deseri
     }
 }
 
-pub fn get_client_async(credentials: &MalojaCredentials) -> reqwest::Client {
+pub fn get_client_async(credentials: &MalojaCredentials) -> Result<reqwest::Client, reqwest::Error> {
     reqwest::Client::builder()
         .danger_accept_invalid_certs(credentials.skip_cert_verification)
         .build()
-        .unwrap()
 }
 
 pub async fn scrobble_async(title: String, artist: String, credentials: MalojaCredentials, client: Client) -> Result<ScrobbleRes, RequestError> {
@@ -104,6 +103,6 @@ pub async fn scrobble_async(title: String, artist: String, credentials: MalojaCr
 pub fn scrobble(title: String, artist: String, credentials: MalojaCredentials) -> Result<ScrobbleRes, RequestError> { 
     tokio::runtime::Runtime::new().unwrap().block_on( async {
         let client = get_client_async(&credentials);
-        scrobble_async(title, artist, credentials, client).await
+        scrobble_async(title, artist, credentials, client.unwrap()).await
     })
 }

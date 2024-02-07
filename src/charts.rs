@@ -54,7 +54,7 @@ pub async fn charts_artists_async(range: Range, credentials: MalojaCredentials, 
 pub fn charts_artists(range: Range, credentials: MalojaCredentials) -> Result<ArtistChart, RequestError> {
     tokio::runtime::Runtime::new().unwrap().block_on( async {
         let client = get_client_async(&credentials);
-        charts_artists_async(range, credentials, client).await
+        charts_artists_async(range, credentials, client.unwrap()).await
     })
 }
 
@@ -90,7 +90,7 @@ pub async fn charts_tracks_async(range: Range, artist: Option<String>, credentia
 pub fn charts_tracks(range: Range, artist: Option<String>, credentials: MalojaCredentials) -> Result<TrackChart, RequestError> {
     tokio::runtime::Runtime::new().unwrap().block_on( async {
         let client = get_client_async(&credentials);
-        charts_tracks_async(range, artist, credentials, client).await
+        charts_tracks_async(range, artist, credentials, client.unwrap()).await
     })
 }
 
@@ -131,6 +131,6 @@ pub async fn charts_albums_async(range: Range, artist: Option<String>, credentia
 pub fn charts_albums(range: Range, artist: Option<String>, credentials: MalojaCredentials) -> Result<AlbumChart, RequestError> {
     tokio::runtime::Runtime::new().unwrap().block_on( async {
         let client = get_client_async(&credentials);
-        charts_albums_async(range, artist, credentials, client).await
+        charts_albums_async(range, artist, credentials, client.unwrap()).await
     })
 }

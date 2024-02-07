@@ -12,7 +12,7 @@ async fn get_image_async(id: String, from_type: &str, credentials: MalojaCredent
     .await;
     match response {
         Err(err) => {
-            Err(RequestError::LocalError(err))
+            Err(RequestError::ReqwestError(err))
         },
         Ok(response) => {
             match response.error_for_status() {
@@ -39,7 +39,7 @@ pub async fn artist_art_async(id: String, credentials: MalojaCredentials, client
 fn get_image(id: String, from_type: &str, credentials: MalojaCredentials) -> Result<Bytes, RequestError> {
     tokio::runtime::Runtime::new().unwrap().block_on( async {
         let client = get_client_async(&credentials);
-        get_image_async(id, from_type, credentials, client).await
+        get_image_async(id, from_type, credentials, client.unwrap()).await
     })
 }
 
