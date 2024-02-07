@@ -9,12 +9,16 @@ use crate::{
 use chrono::prelude::*;
 use reqwest::Client;
 
+/// A scrobble: track and timestamp.
 #[derive(Clone, Debug)]
 pub struct Scrobble {
+    /// The `DateTime<Utc>` when this track was played.
     pub time: DateTime<Utc>,
+    /// Track data.
     pub track: Track,
 }
 
+/// See [scrobbles].
 pub async fn scrobbles_async(
     artist: Option<String>,
     range: Range,
@@ -57,6 +61,26 @@ pub async fn scrobbles_async(
     }
 }
 
+/// Returns a `Vec` of scrobbles within a given time range.
+/// 
+/// # Arguments
+/// 
+/// * `artist` - Optionally, an artist to view scrobbles of.
+/// * `range` - A time range.
+/// * `page_number` - Optionally, the page of scrobbles to view. Will return all scrobbles otherwise. Starts at 0 for most recent.
+/// * `scrobbles_per_page` - Optionally, the amount of scrobbles to view per page. Higher will return more scrobbles per request, but requests will take longer.
+/// * `credentials` - Your credentials.
+/// 
+/// # Examples
+/// 
+/// ```
+/// let recent_scrobbles_vec = mljcl::history::scrobbles(None, mljcl::range::Range::AllTime, Some(0), Some(30), creds).unwrap();
+/// let recent_scrobbles: Vec<String> = recent_scrobbles_vec
+///     .into_iter()
+///     .map(|scrobble: history::Scrobble| scrobble.track.artists.join(", ") + " - " + &scrobble.track.name)
+///     .collect();
+/// println!("Your 30 most recent scrobbles: {}", recent_scrobbles.join("; "));
+/// ```
 pub fn scrobbles(
     artist: Option<String>,
     range: Range,
@@ -78,6 +102,7 @@ pub fn scrobbles(
     })
 }
 
+/// See [numscrobbles].
 pub async fn numscrobbles_async(
     artist: Option<String>,
     range: Range,
@@ -111,6 +136,7 @@ pub async fn numscrobbles_async(
     }
 }
 
+/// Provides a scrobble count, within a given time range, optionally only for a certain artist.
 pub fn numscrobbles(
     artist: Option<String>,
     range: Range,

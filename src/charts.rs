@@ -8,21 +8,28 @@ use crate::{
 };
 use reqwest::Client;
 
+/// A ranked list of artists.
 #[derive(Debug, Clone)]
 pub struct ArtistChart {
+    /// A `Vec` of each artist and their rank.
     pub artists: Vec<(Artist, u64)>,
 }
 
+/// A ranked list of tracks.
 #[derive(Debug, Clone)]
 pub struct TrackChart {
+    /// A `Vec` of each track and its rank.
     pub tracks: Vec<(Track, u64)>,
 }
 
+/// A ranked list of albums.
 #[derive(Debug, Clone)]
 pub struct AlbumChart {
+    /// A `Vec` of each album and its rank.
     pub albums: Vec<(Album, u64)>,
 }
 
+/// See [charts_artists].
 pub async fn charts_artists_async(
     range: Range,
     credentials: MalojaCredentials,
@@ -60,6 +67,25 @@ pub async fn charts_artists_async(
     }
 }
 
+/// Fetches a ranked list of most listened artists, given a time frame.
+///
+/// # Arguments
+///
+/// * `range` - A time frame.
+/// * `credentials` - Your credentials.
+///
+/// # Examples
+/// ```
+/// use mljcl::Range;
+///
+/// let mut top_artists_ranked = mljcl::charts::charts_artists(Range::AllTime, creds).unwrap().artists;
+/// top_artists_ranked.truncate(3);
+/// let top_artists: Vec<String> = top_artists_ranked
+///         .into_iter()
+///         .map(|(artist, _)| artist.name)
+///         .collect();
+/// println!("Your top 3 artists of all time: {}", top_artists.join(", "));
+/// ```
 pub fn charts_artists(
     range: Range,
     credentials: MalojaCredentials,
@@ -70,6 +96,7 @@ pub fn charts_artists(
     })
 }
 
+/// See [charts_tracks].
 pub async fn charts_tracks_async(
     range: Range,
     artist: Option<String>,
@@ -103,6 +130,25 @@ pub async fn charts_tracks_async(
     }
 }
 
+/// Fetches a ranked list of most listened tracks, optionally from a given artist, given a time frame.
+///
+/// # Arguments
+///
+/// * `range` - A time frame.
+/// * `artist` - Optionally, the artist you'd like to rank tracks from.
+/// * `credentials` - Your credentials.
+///
+/// # Examples
+/// ```
+/// use mljcl::Range;
+///
+/// let mut top_tracks_ranked = mljcl::charts::charts_tracks(Range::AllTime, None, creds).unwrap().tracks;
+/// let top_tracks: Vec<String> = top_tracks_ranked
+///         .into_iter()
+///         .map(|(track, _)| track.name)
+///         .collect();
+/// println!("Your top 3 tracks of all time: {}", top_tracks.join(", "));
+/// ```
 pub fn charts_tracks(
     range: Range,
     artist: Option<String>,
@@ -114,6 +160,7 @@ pub fn charts_tracks(
     })
 }
 
+/// See [charts_albums].
 pub async fn charts_albums_async(
     range: Range,
     artist: Option<String>,
@@ -154,6 +201,26 @@ pub async fn charts_albums_async(
     }
 }
 
+/// Fetches a ranked list of most listened albums, optionally from a given artist, given a time frame.
+///
+/// # Arguments
+///
+/// * `range` - A time frame.
+/// * `artist` - Optionally, the artist you'd like to rank albums from.
+/// * `credentials` - Your credentials.
+///
+/// # Examples
+/// ```
+/// use mljcl::Range;
+///
+/// let mut top_albums_ranked = mljcl::charts::charts_albums(Range::AllTime, None, creds).unwrap().albums;
+/// top_albums_ranked.truncate(3);
+/// let top_albums: Vec<String> = top_albums_ranked
+///     .into_iter()
+///     .map(|(album, _)| album.name)
+///     .collect();
+/// println!("Your top 3 albums of all time: {}", top_albums.join(", "));
+/// ```
 pub fn charts_albums(
     range: Range,
     artist: Option<String>,

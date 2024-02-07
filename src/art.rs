@@ -24,6 +24,7 @@ async fn get_image_async(
     }
 }
 
+/// See [album_art].
 pub async fn album_art_async(
     id: String,
     credentials: MalojaCredentials,
@@ -32,6 +33,7 @@ pub async fn album_art_async(
     get_image_async(id, "album", credentials, client).await
 }
 
+/// See [artist_art_async].
 pub async fn artist_art_async(
     id: String,
     credentials: MalojaCredentials,
@@ -51,10 +53,12 @@ fn get_image(
     })
 }
 
+/// Fetches album art for a certain album, given its ID.
 pub fn album_art(id: String, credentials: MalojaCredentials) -> Result<Bytes, RequestError> {
     get_image(id, "album", credentials)
 }
 
+/// Fetches artist art for a certain artist, given its ID.
 pub fn artist_art(id: String, credentials: MalojaCredentials) -> Result<Bytes, RequestError> {
     get_image(id, "artist", credentials)
 }

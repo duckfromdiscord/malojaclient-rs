@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use serde_derive::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
